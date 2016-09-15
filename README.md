@@ -1,4 +1,4 @@
-# coral-auth
+# shelf-auth
 
 ## Installation
 
