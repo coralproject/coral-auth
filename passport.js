@@ -21,6 +21,23 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+/**
+ * Validates that a user is allowed to login.
+ * @param {User}     user the user to be validated
+ * @param {Function} done the callback for the validation
+ */
+function ValidateUserLogin(user, done) {
+  if (!user) {
+    return done(new Error('user not found'));
+  }
+
+  if (user.disabled) {
+    return done(new Error('user disabled'));
+  }
+
+  return done(null, user);
+}
+
 //==============================================================================
 // STRATEGIES
 //==============================================================================
@@ -42,7 +59,7 @@ passport.use(new LocalStrategy({
       return done(null, false, {message: 'Incorrect email/password combination'});
     }
 
-    return done(null, user);
+    return ValidateUserLogin(user, done);
   });
 }));
 
@@ -55,7 +72,13 @@ passport.use(new FacebookStrategy({
     clientSecret: process.env.FACEBOOK_APP_SECRET,
     callbackURL: `${process.env.ROOT_URL}/connect/facebook/callback`
   }, (accessToken, refreshToken, profile, done) => {
-    return User.findOrCreateExternalUser(profile, done);
+    User.findOrCreateExternalUser(profile, (err, user) => {
+      if (err) {
+        return done(err);
+      }
+
+      return ValidateUserLogin(user, done);
+    });
   }
 ));
 
@@ -68,7 +91,13 @@ passport.use(new TwitterStrategy({
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
     callbackURL: `${process.env.ROOT_URL}/connect/twitter/callback`
   }, (token, tokenSecret, profile, done) => {
-    return User.findOrCreateExternalUser(profile, done);
+    User.findOrCreateExternalUser(profile, (err, user) => {
+      if (err) {
+        return done(err);
+      }
+
+      return ValidateUserLogin(user, done);
+    });
   }
 ));
 
@@ -81,7 +110,13 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: `${process.env.ROOT_URL}/connect/google/callback`
   }, (accessToken, refreshToken, profile, done) => {
-    return User.findOrCreateExternalUser(profile, done);
+    User.findOrCreateExternalUser(profile, (err, user) => {
+      if (err) {
+        return done(err);
+      }
+
+      return ValidateUserLogin(user, done);
+    });
   }
 ));
 

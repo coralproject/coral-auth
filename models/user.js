@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema({
     unique: true
   },
   displayName: String,
+  disabled: Boolean,
   password: String,
   profiles: [ProfileSchema]
 });
@@ -77,6 +78,32 @@ UserSchema.statics.findLocalUser = function(email, password, done) {
       return done(null, user);
     });
   });
+};
+
+/**
+ * Merges two users together by taking all the profiles on a given user and
+ * pushing them into the source user followed by deleting the destination user's
+ * user account.
+ * @param  {String} dstUserID id of the user to which is the target of the merge
+ * @param  {String} srcUserID id of the user to which is the source of the merge
+ * @return {Promise}          resolves when the users are merged
+ */
+UserSchema.statics.mergeUsers = function(dstUserID, srcUserID) {
+  let srcUser, dstUser;
+
+  return Promise.all([
+    User.findOne({id: dstUserID}).exec(),
+    User.findOne({id: srcUserID}).exec()
+  ]).then((users) => {
+    dstUser = users[0];
+    srcUser = users[1];
+
+    srcUser.profiles.forEach((profile) => {
+      dstUser.profiles.push(profile);
+    });
+
+    return srcUser.remove();
+  }).then(() => dstUser.save());
 };
 
 /**
@@ -155,6 +182,36 @@ UserSchema.statics.createLocalUser = function(email, password, displayName, done
       return done(null, user);
     });
   });
+};
+
+/**
+ * Disables a given user account.
+ * @param  {String}   id   id of a user
+ * @param  {Function} done callback after the operation is complete
+ */
+UserSchema.statics.disableUser = function(id, done) {
+  User.update({
+    id: id
+  }, {
+    $set: {
+      disabled: true
+    }
+  }, done);
+};
+
+/**
+ * Enables a given user account.
+ * @param  {String}   id   id of a user
+ * @param  {Function} done callback after the operation is complete
+ */
+UserSchema.statics.enableUser = function(id, done) {
+  User.update({
+    id: id
+  }, {
+    $set: {
+      disabled: false
+    }
+  }, done);
 };
 
 const User = mongoose.model('User', UserSchema);
