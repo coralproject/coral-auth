@@ -77,11 +77,16 @@ function listUsers() {
     .exec()
     .then((users) => {
       let table = new Table({
-        head: ['ID', 'Display Name', 'State']
+        head: ['ID', 'Display Name', 'Profiles', 'State']
       });
 
       users.forEach((user) => {
-        table.push([user.id, user.displayName, user.disabled ? 'Disabled' : 'Enabled']);
+        table.push([
+          user.id,
+          user.displayName,
+          user.profiles.map((p) => p.provider).join(', '),
+          user.disabled ? 'Disabled' : 'Enabled'
+        ]);
       });
 
       console.log(table.toString());
