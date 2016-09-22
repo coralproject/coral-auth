@@ -7,7 +7,7 @@ const TOKEN_EXPIRY_TIME = parse(process.env.TOKEN_EXPIRY_TIME) / 1000;
 
 const Token = {
   secret: {
-    key: fs.readFileSync('private.pem'),
+    key: fs.readFileSync('keys/private.pem'),
     passphrase: process.env.PRIVATE_KEY_PASS
   },
   createClaims: (user_id, scopes, nonce) => ({

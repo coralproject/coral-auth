@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const pkg = require('./package.json');
+const pkg = require('../package.json');
 const prompt = require('prompt');
 
 /**
  * Prompts for input and registers a user based on those.
  */
 function createUser() {
-  const User = require('./models/user');
-  const mongoose = require('./mongoose');
+  const User = require('../models/user');
+  const mongoose = require('../mongoose');
 
   return new Promise((resolve, reject) => {
     prompt.start();
@@ -69,8 +69,8 @@ function createUser() {
  */
 function listUsers() {
   const Table = require('cli-table');
-  const User = require('./models/user');
-  const mongoose = require('./mongoose');
+  const User = require('../models/user');
+  const mongoose = require('../mongoose');
 
   User
     .find()
@@ -104,8 +104,8 @@ function listUsers() {
  * @param  {String} srcUserID id of the user to which is the source of the merge
  */
 function mergeUsers(dstUserID, srcUserID) {
-  const User = require('./models/user');
-  const mongoose = require('./mongoose');
+  const User = require('../models/user');
+  const mongoose = require('../mongoose');
 
   User
     .mergeUsers(dstUserID, srcUserID)
@@ -123,12 +123,12 @@ function mergeUsers(dstUserID, srcUserID) {
  * @param  {String} userID the ID of a user to disable
  */
 function disableUser(userID) {
-  const User = require('./models/user');
-  const mongoose = require('./mongoose');
+  const User = require('../models/user');
+  const mongoose = require('../mongoose');
 
   User.disableUser(userID, (err) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       mongoose.disconnect();
       return;
     }
@@ -143,12 +143,12 @@ function disableUser(userID) {
  * @param  {String} userID the ID of a user to enable
  */
 function enableUser(userID) {
-  const User = require('./models/user');
-  const mongoose = require('./mongoose');
+  const User = require('../models/user');
+  const mongoose = require('../mongoose');
 
   User.enableUser(userID, (err) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       mongoose.disconnect();
       return;
     }
@@ -163,14 +163,15 @@ function enableUser(userID) {
  * @param  {String} userID the user id to create the token with.
  */
 function createToken(userID) {
-  const Token = require('./token');
+  const Token = require('../token');
 
   let claims = Token.createClaims(userID, [], '');
 
   // Sign the token with the given claims.
   Token.sign(claims, (err, token) => {
     if (err) {
-      return next(err);
+      console.error(err);
+      return;
     }
 
     console.log(token);
@@ -214,4 +215,16 @@ program
   .description('generates a jwt token for a given user')
   .action(createToken);
 
+// Print the help if there is no command matched.
+program
+  .command('*')
+  .action(() => {
+    program.outputHelp();
+  });
+
 program.parse(process.argv);
+
+// If there is no command listed, output help.
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}

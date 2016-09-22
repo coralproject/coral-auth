@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const url = require('url');
 const merge = require('merge');
+const debug = require('debug')('shelf-auth:oidc');
 
 const Token = require('../token');
 const passport = require('../passport');
@@ -121,6 +122,7 @@ router.get('/authorize', (req, res, next) => {
 
 router.get('/', (req, res, next) => {
   if (!req.user) {
+    debug('no user on the request, can\'t redirect to the redirect_uri');
     return next(new Error('no user'));
   }
 
@@ -130,6 +132,7 @@ router.get('/', (req, res, next) => {
   // Sign the token with the given claims.
   Token.sign(claims, (err, token) => {
     if (err) {
+      debug('can\'t sign the token: ' + err);
       return next(err);
     }
 
@@ -149,7 +152,7 @@ router.get('/', (req, res, next) => {
 
     // And merge all the state information into the url for the redirect.
 
-    let redirect_uri = AddQueryToURI(req.session.redirect_uri);
+    let redirect_uri = AddQueryToURI(req.session.redirect_uri, query);
 
     // We are now redirecting the user to the new url... we should log out.
 

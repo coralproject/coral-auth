@@ -7,20 +7,23 @@ commands:
 
 ```bash
 # generate your private key
-openssl genrsa -des3 -out private.pem 2048
+openssl genrsa -des3 -out keys/private.pem 2048
 
 # generate your public key
-openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+openssl rsa -in keys/private.pem -outform PEM -pubout -out keys/public.pem
 ```
 
 These files must be in the root directory of the project during runtime.
 
 ## Requirements
 
-This service requires MongoDB.
+This service requires MongoDB. You will also require OpenSSL to generate your
+certificates or be able to provide your RSA certificates in a PEM encoded
+format.
 
 ## Configuration
 
+- `PORt` set to the port number you want to run the app on.
 - `TRUST_PROXY` set to `TRUE` in the event you are behind a proxy.
 - `TOKEN_EXPIRY_TIME` set to the duration for the token expiry in a string
   format as described https://www.npmjs.com/package/parse-duration
@@ -39,3 +42,17 @@ This service requires MongoDB.
 - `TWITTER_CONSUMER_SECRET` set to the value provided by the social provider.
 - `GOOGLE_CLIENT_ID` set to the value provided by the social provider.
 - `GOOGLE_CLIENT_SECRET` set to the value provided by the social provider.
+
+## Docker
+
+To run this installation as a single deployment run it with docker-compose.
+
+1. You must have generated the keys from above in the **Installation** section.
+2. Specify configuration as indicated in the **Configuration** section except
+  for the config `MONGO_URL` and `PORT` in a file called `.env` in the project
+  root.
+2. Create the deployment with `docker-compose up -d`.
+3. Create a user with the cli inside the following shell `docker-compose run
+  --rm auth bash`.
+4. From that shell you can execute commands against the cli (See `cli --help`
+  for help using the cli).

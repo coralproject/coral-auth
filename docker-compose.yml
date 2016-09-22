@@ -1,0 +1,21 @@
+version: '2'
+services:
+  mongo:
+    image: mongo
+    volumes:
+      - mongo:/data/db
+  auth:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGO_URL: "mongodb://mongo/test"
+    env_file: .env
+    depends_on:
+      - mongo
+    volumes:
+      - ./keys:/usr/src/app/keys
+volumes:
+  mongo:
+    external: false
