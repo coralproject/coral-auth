@@ -124,14 +124,10 @@ router.get('/', (req, res, next) => {
     return next(new Error('no user'));
   }
 
-  // Prepare the token.
+  // Prepare the token claims.
+  let claims = Token.createClaims(req.user.id, [], req.session.nonce);
 
-  let claims = {
-    sub: req.user.id,
-    scopes: [],
-    nonce: req.session.nonce
-  };
-
+  // Sign the token with the given claims.
   Token.sign(claims, (err, token) => {
     if (err) {
       return next(err);
@@ -147,7 +143,6 @@ router.get('/', (req, res, next) => {
     query.id_token = token;
 
     // Add the state to the token.
-
     if (req.session.state) {
       query.state = req.session.state;
     }

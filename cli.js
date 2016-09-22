@@ -158,6 +158,25 @@ function enableUser(userID) {
   });
 }
 
+/**
+ * Creates a token for a given user id.
+ * @param  {String} userID the user id to create the token with.
+ */
+function createToken(userID) {
+  const Token = require('./token');
+
+  let claims = Token.createClaims(userID, [], '');
+
+  // Sign the token with the given claims.
+  Token.sign(claims, (err, token) => {
+    if (err) {
+      return next(err);
+    }
+
+    console.log(token);
+  });
+}
+
 //==============================================================================
 // Setting up the program command line arguments.
 //==============================================================================
@@ -183,11 +202,16 @@ program
 program
   .command('disable <userID>')
   .description('disable a given user from logging in')
-  .action(disableUser)
+  .action(disableUser);
 
 program
   .command('enable <userID>')
   .description('enable a given user from logging in')
-  .action(enableUser)
+  .action(enableUser);
+
+program
+  .command('create-token <userID>')
+  .description('generates a jwt token for a given user')
+  .action(createToken);
 
 program.parse(process.argv);

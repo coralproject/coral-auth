@@ -10,6 +10,11 @@ const Token = {
     key: fs.readFileSync('private.pem'),
     passphrase: process.env.PRIVATE_KEY_PASS
   },
+  createClaims: (user_id, scopes, nonce) => ({
+    sub: user_id,
+    scopes: scopes || [],
+    nonce: nonce
+  }),
   sign: (payload, done) => {
     return jwt.sign(payload, Token.secret, {
       algorithm: 'RS256',
