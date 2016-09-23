@@ -23,7 +23,7 @@ format.
 
 ## Configuration
 
-- `PORt` set to the port number you want to run the app on.
+- `PORT` set to the port number you want to run the app on.
 - `TRUST_PROXY` set to `TRUE` in the event you are behind a proxy.
 - `TOKEN_EXPIRY_TIME` set to the duration for the token expiry in a string
   format as described https://www.npmjs.com/package/parse-duration

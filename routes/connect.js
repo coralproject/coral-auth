@@ -117,6 +117,10 @@ router.get('/authorize', (req, res, next) => {
   // nonce is required as per https://openid.net/specs/openid-connect-core-1_0.html#ImplicitAuthRequest
   req.session.nonce = nonce;
 
+  if (req.query.state) {
+    req.session.state = req.query.state;
+  }
+
   res.render('authorize', {csrfToken: req.csrfToken()});
 });
 
@@ -150,6 +154,9 @@ router.get('/', (req, res, next) => {
       query.state = req.session.state;
     }
 
+    // Add the nonce token.
+    query.nonce = req.session.nonce;
+
     // And merge all the state information into the url for the redirect.
 
     let redirect_uri = AddQueryToURI(req.session.redirect_uri, query);
@@ -175,8 +182,11 @@ router.get('/', (req, res, next) => {
 
 router.get('/.well-known/openid-configuration', (req, res) => {
   res.json({
+    issuer: process.env.ROOT_URL + '/connect',
     authorization_endpoint: process.env.ROOT_URL + '/connect/authorize',
     scopes_supported: ['openid'],
+    registration_endpoint: process.env.ROOT_URL + '/connect/authorize',
+    subject_types_supported: ['public'],
     response_types_supported: ['id_token'],
     id_token_signing_alg_values_supported: ['RS256']
   })

@@ -34,11 +34,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  resave: false,
+  resave: true,
   saveUninitialized: true,
   cookie: {
     maxAge: 60000,
-    secure: process.env.ROOT_URL.indexOf('https') >= 0
+    secure: process.env.ROOT_URL.indexOf('https') === 0
   },
   store: new MongoStore({
     mongooseConnection: mongoose.connection
