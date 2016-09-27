@@ -4,6 +4,8 @@ const logger = require('morgan');
 const path = require('path');
 const session = require('express-session');
 const csurf = require('csurf');
+const cors = require('express-cors');
+const url = require('url');
 const helmet = require('helmet');
 const passport = require('./passport');
 const mongoose = require('./mongoose');
@@ -71,6 +73,23 @@ app.use(passport.session());
 // CONNECT
 
 const connect = require('./routes/connect');
+
+// Walk over the allowed clients and only allow the XHR from those
+// hosts/schemes.
+const allowedOrigins = process.env.ALLOWED_CLIENTS.split(' ').filter((client, i) => {
+  return i % 2 == 1;
+}).map((client) => {
+  let u = url.parse(client);
+
+  u.pathname = '';
+
+  return url.format(u);
+});
+
+app.use('/connect/.well-known/openid-configuration', cors({
+  allowedOrigins: allowedOrigins,
+  methods: ['GET']
+}));
 
 app.use('/connect', connect);
 
