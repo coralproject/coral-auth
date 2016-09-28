@@ -7,8 +7,7 @@ const TOKEN_EXPIRY_TIME = parse(process.env.TOKEN_EXPIRY_TIME) / 1000;
 
 const Token = {
   secret: {
-    key: fs.readFileSync('keys/private.pem'),
-    passphrase: process.env.PRIVATE_KEY_PASS
+    key: fs.readFileSync('keys/private.pem')
   },
   createClaims: (user_id, scopes, nonce) => ({
     sub: user_id,
@@ -17,7 +16,7 @@ const Token = {
   }),
   sign: (payload, done) => {
     return jwt.sign(payload, Token.secret, {
-      algorithm: 'RS256',
+      algorithm: 'ES512',
       expiresIn: TOKEN_EXPIRY_TIME,
       jwtid: uuid.v4(),
       notBefore: "1 minute"
@@ -25,7 +24,7 @@ const Token = {
   },
   verify: (token, done) => {
     return jwt.verify(token, Token.secret, {
-      algorithms: ['RS256']
+      algorithms: ['ES512']
     }, done);
   }
 };

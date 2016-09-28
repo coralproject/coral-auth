@@ -7,10 +7,10 @@ commands:
 
 ```bash
 # generate your private key
-openssl genrsa -des3 -out keys/private.pem 2048
+openssl ecparam -genkey -name secp256k1 -noout -out keys/private.pem
 
 # generate your public key
-openssl rsa -in keys/private.pem -outform PEM -pubout -out keys/public.pem
+openssl ec -in keys/private.pem -pubout -out keys/public.pem
 ```
 
 These files must be in the root directory of the project during runtime.
@@ -18,7 +18,7 @@ These files must be in the root directory of the project during runtime.
 ## Requirements
 
 This service requires MongoDB. You will also require OpenSSL to generate your
-certificates or be able to provide your RSA certificates in a PEM encoded
+certificates or be able to provide your ECSDA certificates in a PEM encoded
 format.
 
 ## Configuration

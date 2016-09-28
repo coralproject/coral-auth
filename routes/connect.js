@@ -188,7 +188,7 @@ router.get('/.well-known/openid-configuration', (req, res) => {
     registration_endpoint: process.env.ROOT_URL + '/connect/authorize',
     subject_types_supported: ['public'],
     response_types_supported: ['id_token'],
-    id_token_signing_alg_values_supported: ['RS256']
+    id_token_signing_alg_values_supported: ['ES512']
   })
 });
 
