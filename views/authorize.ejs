@@ -27,11 +27,11 @@
           <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
 
-        <hr>
+        <% if (enabled.facebook || enabled.twitter || enabled.google) { %><hr><% } %>
 
-        <a class="btn btn-lg btn-secondary btn-block" href="/connect/facebook">Connect with <i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook</a>
-        <a class="btn btn-lg btn-secondary btn-block" href="/connect/twitter">Connect with <i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a>
-        <a class="btn btn-lg btn-secondary btn-block" href="/connect/google">Connect with <i class="fa fa-google" aria-hidden="true"></i> Google</a>
+        <% if (enabled.facebook) { %><a class="btn btn-lg btn-secondary btn-block" href="/connect/facebook">Connect with <i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook</a><% } %>
+        <% if (enabled.twitter) { %><a class="btn btn-lg btn-secondary btn-block" href="/connect/twitter">Connect with <i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a><% } %>
+        <% if (enabled.google) { %><a class="btn btn-lg btn-secondary btn-block" href="/connect/google">Connect with <i class="fa fa-google" aria-hidden="true"></i> Google</a><% } %>
       </div>
 
     </div>

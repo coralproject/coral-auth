@@ -29,7 +29,7 @@ format.
   format as described https://www.npmjs.com/package/parse-duration
 - `SESSION_SECRET` set to the secret for the session keys for cookie signing.
 - `ENABLE_DEMO` set to `TRUE` to enable the demo page viewable at `/demo`.
-- `DEBUG` set to `shelf-auth*` to have debug logs printed during operation.
+- `DEBUG` set to `coral-auth*` to have debug logs printed during operation.
 - `ALLOWED_CLIENTS` set to space separated tuples of client id and callback url
   in the form like `clientID1 https://clientID1/callback/url clientID2 https://clientID2/callback/url`
 - `MONGO_URL` set to the url in the `mongodb://...` format.

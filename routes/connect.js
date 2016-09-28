@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const url = require('url');
 const merge = require('merge');
-const debug = require('debug')('shelf-auth:oidc');
+const debug = require('debug')('coral-auth:oidc');
 
 const Token = require('../token');
 const passport = require('../passport');
@@ -121,7 +121,10 @@ router.get('/authorize', (req, res, next) => {
     req.session.state = req.query.state;
   }
 
-  res.render('authorize', {csrfToken: req.csrfToken()});
+  res.render('authorize', {
+    csrfToken: req.csrfToken(),
+    enabled: passport.ENABLED
+  });
 });
 
 router.get('/', (req, res, next) => {
@@ -219,17 +222,23 @@ router.post('/local', passport.authenticate('local', {successRedirect: '/connect
 
 // FACEBOOK
 
-router.get('/facebook', passport.authenticate('facebook', {failureRedirect: '/connect/authorize?error=error'}));
-router.get('/facebook/callback', passport.authenticate('facebook', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+if (passport.ENABLED.facebook) {
+  router.get('/facebook', passport.authenticate('facebook', {failureRedirect: '/connect/authorize?error=error'}));
+  router.get('/facebook/callback', passport.authenticate('facebook', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+}
 
 // TWITTER
 
-router.get('/twitter', passport.authenticate('twitter', {failureRedirect: '/connect/authorize?error=error'}));
-router.get('/twitter/callback', passport.authenticate('twitter', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+if (passport.ENABLED.twitter) {
+  router.get('/twitter', passport.authenticate('twitter', {failureRedirect: '/connect/authorize?error=error'}));
+  router.get('/twitter/callback', passport.authenticate('twitter', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+}
 
 // GOOGLE
 
-router.get('/google', passport.authenticate('google', {scope: ['profile'], failureRedirect: '/connect/authorize?error=error'}));
-router.get('/google/callback', passport.authenticate('google', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+if (passport.ENABLED.google) {
+  router.get('/google', passport.authenticate('google', {scope: ['profile'], failureRedirect: '/connect/authorize?error=error'}));
+  router.get('/google/callback', passport.authenticate('google', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+}
 
 module.exports = router;

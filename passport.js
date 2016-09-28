@@ -1,5 +1,6 @@
 const passport = require('passport');
 const User = require('./models/user');
+const debug = require('debug')('coral-auth:passport');
 
 //==============================================================================
 // SESSION SERIALIZATION
@@ -42,6 +43,8 @@ function ValidateUserLogin(user, done) {
 // STRATEGIES
 //==============================================================================
 
+var ENABLED = {};
+
 // LOCAL
 
 const LocalStrategy = require('passport-local').Strategy;
@@ -65,59 +68,84 @@ passport.use(new LocalStrategy({
 
 // FACEBOOK
 
-const FacebookStrategy = require('passport-facebook').Strategy;
+ENABLED.facebook = process.env.FACEBOOK_APP_ID !== '' && process.env.FACEBOOK_APP_SECRET !== '';
 
-passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: `${process.env.ROOT_URL}/connect/facebook/callback`
-  }, (accessToken, refreshToken, profile, done) => {
-    User.findOrCreateExternalUser(profile, (err, user) => {
-      if (err) {
-        return done(err);
-      }
+if (ENABLED.facebook) {
 
-      return ValidateUserLogin(user, done);
-    });
-  }
-));
+  const FacebookStrategy = require('passport-facebook').Strategy;
+
+  passport.use(new FacebookStrategy({
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: `${process.env.ROOT_URL}/connect/facebook/callback`
+    }, (accessToken, refreshToken, profile, done) => {
+      User.findOrCreateExternalUser(profile, (err, user) => {
+        if (err) {
+          return done(err);
+        }
+
+        return ValidateUserLogin(user, done);
+      });
+    }
+  ));
+
+} else {
+  debug('FACEBOOK provider is disabled');
+}
 
 // TWITTER
 
-const TwitterStrategy = require('passport-twitter').Strategy;
+ENABLED.twitter = process.env.TWITTER_CONSUMER_KEY !== '' && process.env.TWITTER_CONSUMER_SECRET !== '';
 
-passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: `${process.env.ROOT_URL}/connect/twitter/callback`
-  }, (token, tokenSecret, profile, done) => {
-    User.findOrCreateExternalUser(profile, (err, user) => {
-      if (err) {
-        return done(err);
-      }
+if (ENABLED.twitter) {
 
-      return ValidateUserLogin(user, done);
-    });
-  }
-));
+  const TwitterStrategy = require('passport-twitter').Strategy;
+
+  passport.use(new TwitterStrategy({
+      consumerKey: process.env.TWITTER_CONSUMER_KEY,
+      consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+      callbackURL: `${process.env.ROOT_URL}/connect/twitter/callback`
+    }, (token, tokenSecret, profile, done) => {
+      User.findOrCreateExternalUser(profile, (err, user) => {
+        if (err) {
+          return done(err);
+        }
+
+        return ValidateUserLogin(user, done);
+      });
+    }
+  ));
+
+} else {
+  debug('TWITTER provider is disabled');
+}
 
 // GOOGLE
 
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+ENABLED.google = process.env.GOOGLE_CLIENT_ID !== '' && process.env.GOOGLE_CLIENT_SECRET !== '';
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${process.env.ROOT_URL}/connect/google/callback`
-  }, (accessToken, refreshToken, profile, done) => {
-    User.findOrCreateExternalUser(profile, (err, user) => {
-      if (err) {
-        return done(err);
-      }
+if (ENABLED.google) {
 
-      return ValidateUserLogin(user, done);
-    });
-  }
-));
+  const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+  passport.use(new GoogleStrategy({
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `${process.env.ROOT_URL}/connect/google/callback`
+    }, (accessToken, refreshToken, profile, done) => {
+      User.findOrCreateExternalUser(profile, (err, user) => {
+        if (err) {
+          return done(err);
+        }
+
+        return ValidateUserLogin(user, done);
+      });
+    }
+  ));
+
+} else {
+  debug('GOOGLE provider is disabled');
+}
 
 module.exports = passport;
+module.exports.ENABLED = ENABLED;

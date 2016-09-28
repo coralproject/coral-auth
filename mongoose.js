@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 
 mongoose.connect(process.env.MONGO_URL);
 
-if (enabled('shelf-auth:db')) {
+if (enabled('coral-auth:db')) {
   mongoose.set('debug', true);
 }
 
