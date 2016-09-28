@@ -4,6 +4,7 @@ body {
   background-color: #eee;
 }
 .form-signin {
+  background-color: white;
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
@@ -17,7 +18,9 @@ body {
   text-align: center;
 }
 .form-signin .form-signin-heading {
-  margin-bottom: 10px;
+  font-size: 1.5rem;
+  margin: 10px 0;
+  text-align: center;
 }
 .form-signin .form-control {
   position: relative;
@@ -48,4 +51,47 @@ pre.code {
   background: #0b0035;
   border-radius: 5px;
   color: #d6d6d6;
+}
+
+.coral-sign-in {
+  text-transform: none;
+  background-color: rgb(246, 125, 111);
+}
+
+.coral-sign-in:hover, .coral-sign-in:focus {
+  background-color: rgb(251, 163, 152);
+}
+
+.fb-sign-in {
+  background-color: rgb(68, 94, 166);
+  margin-bottom: 10px;
+}
+
+.fb-sign-in:hover, .fb-sign-in:focus {
+  background-color: rgb(95, 124, 206);
+}
+
+.twitter-sign-in {
+  background-color: rgb(77, 180, 245);
+  margin-bottom: 10px;
+}
+
+.twitter-sign-in:hover, .twitter-sign-in:focus {
+  background-color: rgb(138, 209, 253);
+}
+
+.google-sign-in {
+
+}
+
+.google-sign-in:hover {
+
+}
+
+.coral-sign-in, .fb-sign-in, .twitter-sign-in, .google-sign-in {
+  width: 100%;
+}
+
+.fb-sign-in, .twitter-sign-in, .google-sign-in {
+  padding-left: 15px;
 }
