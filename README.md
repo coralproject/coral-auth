@@ -30,7 +30,6 @@ format.
 - `SESSION_SECRET` set to the secret for the session keys for cookie signing.
 - `ENABLE_DEMO` set to `TRUE` to enable the demo page viewable at `/demo`.
 - `DEBUG` set to `shelf-auth*` to have debug logs printed during operation.
-- `PRIVATE_KEY_PASS` set to the password of the private key file.
 - `ALLOWED_CLIENTS` set to space separated tuples of client id and callback url
   in the form like `clientID1 https://clientID1/callback/url clientID2 https://clientID2/callback/url`
 - `MONGO_URL` set to the url in the `mongodb://...` format.

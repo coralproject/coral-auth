@@ -68,7 +68,7 @@
           signInDOM.disabled = true;
           tokenDOM.innerText = id_token;
           debuggerDOM.href = 'https://jwt.io/#debugger?&id_token=' + id_token;
-          detailsDOM.innerHTML = 'Hello <b>' + decodedToken.user_id + '</b>!';
+          detailsDOM.innerHTML = 'Hello <b>' + decodedToken.sub + '</b>!';
 
           loggedInDOM.style.display = 'block';
         } else {
