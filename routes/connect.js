@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const url = require('url');
-const merge = require('merge');
+const querystring = require('querystring');
 const debug = require('debug')('coral-auth:oidc');
 
 const Token = require('../token');
@@ -46,14 +46,14 @@ const ValidateNonce = function(nonce) {
 };
 
 /**
- * Merges the uri's query and the input query and outputs the new uri string.
+ * Adds the object to the hash of the uri.
  * @param {String} uri   the uri to be parsed and formatted
- * @param {Object} query the query to merge in
+ * @param {Object} obj   the object to be added as the hash
  */
-const AddQueryToURI = function(uri, query) {
+const AddObjectToHash = function(uri, obj) {
   let u = url.parse(uri, true);
 
-  u.query = merge(u.query, query);
+  u.hash = querystring.stringify(obj);
 
   return url.format(u);
 }
@@ -69,7 +69,7 @@ router.get('/authorize', (req, res, next) => {
     // TODO: log the error
 
     if (req.session && req.session.redirect_uri) {
-      let redirect_uri = AddQueryToURI(req.session.redirect_uri, {
+      let redirect_uri = AddObjectToHash(req.session.redirect_uri, {
         error: err
       });
 
@@ -162,7 +162,7 @@ router.get('/', (req, res, next) => {
 
     // And merge all the state information into the url for the redirect.
 
-    let redirect_uri = AddQueryToURI(req.session.redirect_uri, query);
+    let redirect_uri = AddObjectToHash(req.session.redirect_uri, query);
 
     // We are now redirecting the user to the new url... we should log out.
 
