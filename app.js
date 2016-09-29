@@ -86,7 +86,7 @@ const allowedOrigins = process.env.ALLOWED_CLIENTS.split(' ').filter((client, i)
   return url.format(u);
 });
 
-app.use('/connect/.well-known/openid-configuration', cors({
+app.use('/connect/.well-known', cors({
   allowedOrigins: allowedOrigins,
   methods: ['GET']
 }));

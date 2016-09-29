@@ -2,13 +2,22 @@ const parse = require('parse-duration');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const uuid = require('uuid');
+const jose = require('node-jose');
+const debug = require('debug')('coral-auth:token');
 
 const TOKEN_EXPIRY_TIME = parse(process.env.TOKEN_EXPIRY_TIME) / 1000;
 
+const privateKey = fs.readFileSync('keys/private.pem', 'ascii');
+debug('Loaded keys/private.pem');
+
+const publicKey = fs.readFileSync('keys/public.pem', 'ascii');
+debug('Loaded keys/public.pem');
+
 const Token = {
   secret: {
-    key: fs.readFileSync('keys/private.pem')
+    key: privateKey
   },
+  jwk: null,
   createClaims: (user_id, scopes, nonce) => ({
     sub: user_id,
     scopes: scopes || [],
@@ -28,5 +37,21 @@ const Token = {
     }, done);
   }
 };
+
+// Load the public key into the keystore so we can use it to create our jwk.
+jose.JWK.asKey(publicKey, 'pem').then((result) => {
+
+  // Load the keystore JSON into our object.
+  Token.jwk = result.keystore.toJSON();
+
+  debug('Keystore has been populated');
+}).catch((err) => {
+
+  // We couldn't load the publicKey into the keystore.
+  console.error(err);
+
+  // This is bad, so we should just exit at this point.
+  process.exit(1);
+});
 
 module.exports = Token;

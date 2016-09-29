@@ -183,6 +183,10 @@ router.get('/', (req, res, next) => {
   });
 });
 
+//==============================================================================
+// OPENID CONFIGURATION
+//==============================================================================
+
 router.get('/.well-known/openid-configuration', (req, res) => {
   res.json({
     issuer: process.env.ROOT_URL + '/connect',
@@ -190,17 +194,22 @@ router.get('/.well-known/openid-configuration', (req, res) => {
     scopes_supported: ['openid'],
     registration_endpoint: process.env.ROOT_URL + '/connect/authorize',
     subject_types_supported: ['public'],
+    jwks_uri: process.env.ROOT_URL + '/connect/.well-known/jwks',
     response_types_supported: ['id_token'],
     id_token_signing_alg_values_supported: ['ES512']
   })
 });
 
+router.get('/.well-known/jwks', (req, res) => {
+  res.json(Token.jwk);
+});
+
 //==============================================================================
-// STRATEGY VERIFICATIONS
+// STRATEGY
 //==============================================================================
 
 // Verify that we have the needed pieces inside the session.
-router.use('/', (req, res, next) => {
+const verifyMidware = (req, res, next) => {
   if (!req.session.redirect_uri) {
     return next(new Error('redirect_uri is required'));
   }
@@ -210,7 +219,7 @@ router.use('/', (req, res, next) => {
   }
 
   next();
-});
+};
 
 //==============================================================================
 // STRATEGIES
@@ -218,27 +227,27 @@ router.use('/', (req, res, next) => {
 
 // LOCAL
 
-router.post('/local', passport.authenticate('local', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+router.post('/local', verifyMidware, passport.authenticate('local', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
 
 // FACEBOOK
 
 if (passport.ENABLED.facebook) {
-  router.get('/facebook', passport.authenticate('facebook', {failureRedirect: '/connect/authorize?error=error'}));
-  router.get('/facebook/callback', passport.authenticate('facebook', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+  router.get('/facebook', verifyMidware, passport.authenticate('facebook', {failureRedirect: '/connect/authorize?error=error'}));
+  router.get('/facebook/callback', verifyMidware, passport.authenticate('facebook', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
 }
 
 // TWITTER
 
 if (passport.ENABLED.twitter) {
-  router.get('/twitter', passport.authenticate('twitter', {failureRedirect: '/connect/authorize?error=error'}));
-  router.get('/twitter/callback', passport.authenticate('twitter', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+  router.get('/twitter', verifyMidware, passport.authenticate('twitter', {failureRedirect: '/connect/authorize?error=error'}));
+  router.get('/twitter/callback', verifyMidware, passport.authenticate('twitter', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
 }
 
 // GOOGLE
 
 if (passport.ENABLED.google) {
-  router.get('/google', passport.authenticate('google', {scope: ['profile'], failureRedirect: '/connect/authorize?error=error'}));
-  router.get('/google/callback', passport.authenticate('google', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
+  router.get('/google', verifyMidware, passport.authenticate('google', {scope: ['profile'], failureRedirect: '/connect/authorize?error=error'}));
+  router.get('/google/callback', verifyMidware, passport.authenticate('google', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
 }
 
 module.exports = router;
