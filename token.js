@@ -14,9 +14,6 @@ const publicKey = fs.readFileSync('keys/public.pem', 'ascii');
 debug('Loaded keys/public.pem');
 
 const Token = {
-  secret: {
-    key: privateKey
-  },
   jwk: null,
   createClaims: (client_id, user_id, scopes, nonce) => ({
     sub: user_id,
@@ -28,9 +25,9 @@ const Token = {
     // Set the kid on the signed token.
     payload.kid = Token.jwk.keys[0].kid;
 
-    return jwt.sign(payload, Token.secret, {
+    return jwt.sign(payload, privateKey, {
       issuer: process.env.ROOT_URL + '/connect',
-      algorithm: 'ES512',
+      algorithm: 'ES384',
       expiresIn: TOKEN_EXPIRY_TIME,
       jwtid: uuid.v4(),
       notBefore: "1 minute"
@@ -38,7 +35,7 @@ const Token = {
   },
   verify: (token, done) => {
     return jwt.verify(token, Token.secret, {
-      algorithms: ['ES512']
+      algorithms: ['ES384']
     }, done);
   }
 };

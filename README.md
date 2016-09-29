@@ -7,7 +7,7 @@ commands:
 
 ```bash
 # generate your private key
-openssl ecparam -genkey -name secp521r1 -noout -out keys/private.pem
+openssl ecparam -genkey -name secp384r1 -noout -out keys/private.pem
 
 # generate your public key
 openssl ec -in keys/private.pem -pubout -out keys/public.pem
