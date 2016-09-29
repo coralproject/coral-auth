@@ -134,7 +134,7 @@ router.get('/', (req, res, next) => {
   }
 
   // Prepare the token claims.
-  let claims = Token.createClaims(req.user.id, [], req.session.nonce);
+  let claims = Token.createClaims(req.session.client_id, req.user.id, [], req.session.nonce);
 
   // Sign the token with the given claims.
   Token.sign(claims, (err, token) => {
@@ -212,6 +212,10 @@ router.get('/.well-known/jwks', (req, res) => {
 const verifyMidware = (req, res, next) => {
   if (!req.session.redirect_uri) {
     return next(new Error('redirect_uri is required'));
+  }
+
+  if (!req.session.client_id) {
+    return next(new Error('client_id is required'));
   }
 
   if (!req.session.nonce) {

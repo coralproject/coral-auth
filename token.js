@@ -18,8 +18,9 @@ const Token = {
     key: privateKey
   },
   jwk: null,
-  createClaims: (user_id, scopes, nonce) => ({
+  createClaims: (client_id, user_id, scopes, nonce) => ({
     sub: user_id,
+    aud: client_id,
     scopes: scopes || [],
     nonce: nonce
   }),
