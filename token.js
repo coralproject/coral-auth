@@ -15,6 +15,7 @@ debug('Loaded keys/public.pem');
 
 const Token = {
   jwk: null,
+  alg: 'ES384',
   createClaims: (client_id, user_id, scopes, nonce) => ({
     sub: user_id,
     aud: client_id,
@@ -27,7 +28,7 @@ const Token = {
 
     return jwt.sign(payload, privateKey, {
       issuer: process.env.ROOT_URL + '/connect',
-      algorithm: 'ES384',
+      algorithm: Token.alg,
       expiresIn: TOKEN_EXPIRY_TIME,
       jwtid: uuid.v4(),
       notBefore: "1 minute"
@@ -35,7 +36,7 @@ const Token = {
   },
   verify: (token, done) => {
     return jwt.verify(token, Token.secret, {
-      algorithms: ['ES384']
+      algorithms: [Token.alg]
     }, done);
   }
 };

@@ -196,7 +196,7 @@ router.get('/.well-known/openid-configuration', (req, res) => {
     subject_types_supported: ['public'],
     jwks_uri: process.env.ROOT_URL + '/connect/.well-known/jwks',
     response_types_supported: ['id_token'],
-    id_token_signing_alg_values_supported: ['ES512']
+    id_token_signing_alg_values_supported: [Token.alg]
   })
 });
 
