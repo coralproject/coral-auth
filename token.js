@@ -24,6 +24,9 @@ const Token = {
     nonce: nonce
   }),
   sign: (payload, done) => {
+    // Set the kid on the signed token.
+    payload.kid = Token.jwk.keys[0].kid;
+
     return jwt.sign(payload, Token.secret, {
       algorithm: 'ES512',
       expiresIn: TOKEN_EXPIRY_TIME,
