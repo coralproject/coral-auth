@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Coral Login</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/materialize.min.css" media="screen">
     <link rel="stylesheet" href="/stylesheets/style.css" media="screen">
     <link rel="stylesheet" href="/stylesheets/font-awesome.min.css" media="screen">
   </head>
@@ -17,23 +18,31 @@
     <div class="container">
 
       <div class="form-signin">
+        <h2 class="form-signin-heading">Coral Login</h2>
+        <% if (enabled.facebook) { %><a class="btn btn-lg waves-effect waves-light fb-sign-in" href="/connect/facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> Connect with Facebook</a><% } %>
+        <% if (enabled.twitter) { %><a class="btn btn-lg waves-effect waves-light twitter-sign-in" href="/connect/twitter"><i class="fa fa-twitter" aria-hidden="true"></i> Connect with Twitter</a><% } %>
+        <% if (enabled.google) { %><a class="btn btn-lg waves-effect waves-light google-sign-in" href="/connect/google"><i class="fa fa-google" aria-hidden="true"></i> Connect with Google</a><% } %>
+
+        <% if (enabled.facebook || enabled.twitter || enabled.google) { %>
+          <h2 class="form-signin-heading">Or</h2>
+        <% } %>
+
         <form method="post" action="/connect/local">
-          <h2 class="form-signin-heading">Coral Login</h2>
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <label for="inputEmail" class="sr-only">Email address</label>
-          <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
-          <label for="inputPassword" class="sr-only">Password</label>
-          <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+          <div class="input-field">
+            <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
+            <label for="inputEmail" class="sr-only">Email address</label>
+          </div>
+          <div class="input-field">
+            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+            <label for="inputPassword" class="sr-only">Password</label>
+          </div>
+          <button class="btn waves-effect waves-light coral-sign-in" type="submit">Sign in</button>
         </form>
-
-        <% if (enabled.facebook || enabled.twitter || enabled.google) { %><hr><% } %>
-
-        <% if (enabled.facebook) { %><a class="btn btn-lg btn-secondary btn-block" href="/connect/facebook">Connect with <i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook</a><% } %>
-        <% if (enabled.twitter) { %><a class="btn btn-lg btn-secondary btn-block" href="/connect/twitter">Connect with <i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a><% } %>
-        <% if (enabled.google) { %><a class="btn btn-lg btn-secondary btn-block" href="/connect/google">Connect with <i class="fa fa-google" aria-hidden="true"></i> Google</a><% } %>
       </div>
 
     </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="/javascripts/materialize.min.js"></script>
   </body>
 </html>
