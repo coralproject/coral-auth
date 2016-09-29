@@ -28,6 +28,7 @@ const Token = {
     payload.kid = Token.jwk.keys[0].kid;
 
     return jwt.sign(payload, Token.secret, {
+      issuer: process.env.ROOT_URL + '/connect',
       algorithm: 'ES512',
       expiresIn: TOKEN_EXPIRY_TIME,
       jwtid: uuid.v4(),
