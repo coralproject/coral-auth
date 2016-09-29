@@ -45,7 +45,17 @@ const Token = {
 jose.JWK.asKey(publicKey, 'pem').then((result) => {
 
   // Load the keystore JSON into our object.
-  Token.jwk = result.keystore.toJSON();
+  let jwk = result.keystore.toJSON();
+
+  // Add the use param for the key.
+  jwk.keys = jwk.keys.map((key) => {
+    key.use = 'sig';
+
+    return key;
+  });
+
+  // Add the jwk for the token.
+  Token.jwk = jwk;
 
   debug('Keystore has been populated');
 }).catch((err) => {
