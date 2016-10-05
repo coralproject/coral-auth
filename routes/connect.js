@@ -159,7 +159,7 @@ router.get('/', (req, res, next) => {
     id_token_claims.nonce = req.session.nonce;
 
     // create the at_hash param
-    const digest = crypto.createHash('sha256').update(access_token, 'utf8').digest();
+    const digest = crypto.createHash('sha384').update(access_token, 'utf8').digest();
 
     let digest_truncated = digest.slice(0, digest.length / 2);
 
