@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const url = require('url');
 const crypto = require('crypto');
+const base64url = require('base64-url');
 const querystring = require('querystring');
 const debug = require('debug')('coral-auth:oidc');
 
@@ -163,7 +164,7 @@ router.get('/', (req, res, next) => {
 
     let digest_truncated = digest.slice(0, digest.length / 2);
 
-    id_token_claims.at_hash = digest_truncated.toString('base64');
+    id_token_claims.at_hash = base64url.encode(digest_truncated.toString());
 
     // Sign the token with the given claims.
     Token.sign(id_token_claims, (err, id_token) => {
