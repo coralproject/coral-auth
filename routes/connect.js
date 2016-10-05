@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const url = require('url');
+const crypto = require('crypto');
 const querystring = require('querystring');
 const debug = require('debug')('coral-auth:oidc');
 
@@ -133,48 +134,55 @@ router.get('/', (req, res, next) => {
     return next(new Error('no user'));
   }
 
-  // Prepare the token claims.
-  let id_token_claims = Token.createClaims(req.session.client_id, req.user.id);
+  // We are now composing the redirect url that we will use to forwawrd the
+  // request.
 
-  id_token_claims.nonce = req.session.nonce;
+  let query = {};
 
-  // Sign the token with the given claims.
-  Token.sign(id_token_claims, (err, id_token) => {
+  let access_token_claims = {
+    scopes: []
+  };
+
+  Token.sign(access_token_claims, (err, access_token) => {
     if (err) {
-      debug('can\'t sign the id_token: ' + err);
+      debug('can\'t sign the access_token: ' + err);
       return next(err);
     }
 
-    // We are now composing the redirect url that we will use to forwawrd the
-    // request.
+    query.access_token = access_token;
+    query.token_type = 'bearer';
+    query.expires_in = Token.expiresIn;
 
-    let query = {};
+    // Prepare the token claims.
+    let id_token_claims = Token.createClaims(req.session.client_id, req.user.id);
 
-    // Add the token as `id_token` to the query string.
+    id_token_claims.nonce = req.session.nonce;
 
-    query.id_token = id_token;
+    // create the at_hash param
+    const digest = crypto.createHash('sha256').update(access_token, 'utf8').digest();
 
-    // Add the state to the token.
-    if (req.session.state) {
-      query.state = req.session.state;
-    }
+    let digest_truncated = digest.slice(0, digest.length / 2);
 
-    // Add the nonce token.
-    query.nonce = req.session.nonce;
+    id_token_claims.at_hash = digest_truncated.toString('base64');
 
-    let access_token_claims = {
-      scopes: []
-    };
-
-    Token.sign(access_token_claims, (err, access_token) => {
+    // Sign the token with the given claims.
+    Token.sign(id_token_claims, (err, id_token) => {
       if (err) {
-        debug('can\'t sign the access_token: ' + err);
+        debug('can\'t sign the id_token: ' + err);
         return next(err);
       }
 
-      query.access_token = access_token;
-      query.token_type = 'bearer';
-      query.expires_in = Token.expiresIn;
+      // Add the token as `id_token` to the query string.
+
+      query.id_token = id_token;
+
+      // Add the state to the token.
+      if (req.session.state) {
+        query.state = req.session.state;
+      }
+
+      // Add the nonce token.
+      query.nonce = req.session.nonce;
 
       // And merge all the state information into the url for the redirect.
 
