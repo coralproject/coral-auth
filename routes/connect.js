@@ -134,12 +134,14 @@ router.get('/', (req, res, next) => {
   }
 
   // Prepare the token claims.
-  let claims = Token.createClaims(req.session.client_id, req.user.id, [], req.session.nonce);
+  let id_token_claims = Token.createClaims(req.session.client_id, req.user.id);
+
+  id_token_claims.nonce = req.session.nonce;
 
   // Sign the token with the given claims.
-  Token.sign(claims, (err, token) => {
+  Token.sign(id_token_claims, (err, id_token) => {
     if (err) {
-      debug('can\'t sign the token: ' + err);
+      debug('can\'t sign the id_token: ' + err);
       return next(err);
     }
 
@@ -150,7 +152,7 @@ router.get('/', (req, res, next) => {
 
     // Add the token as `id_token` to the query string.
 
-    query.id_token = token;
+    query.id_token = id_token;
 
     // Add the state to the token.
     if (req.session.state) {
@@ -160,25 +162,40 @@ router.get('/', (req, res, next) => {
     // Add the nonce token.
     query.nonce = req.session.nonce;
 
-    // And merge all the state information into the url for the redirect.
+    let access_token_claims = {
+      scopes: []
+    };
 
-    let redirect_uri = AddObjectToHash(req.session.redirect_uri, query);
-
-    // We are now redirecting the user to the new url... we should log out.
-
-    req.logout();
-
-    // And since we're logging out, we'll also flush our session.
-
-    req.session.destroy((err) => {
+    Token.sign(access_token_claims, (err, access_token) => {
       if (err) {
+        debug('can\'t sign the access_token: ' + err);
         return next(err);
       }
 
-      // And redirect the user to the new redirect uri as per the OpenID Connect
-      // spec.
+      query.access_token = access_token;
+      query.token_type = 'bearer';
+      query.expires_in = Token.expiresIn;
 
-      res.redirect(redirect_uri);
+      // And merge all the state information into the url for the redirect.
+
+      let redirect_uri = AddObjectToHash(req.session.redirect_uri, query);
+
+      // We are now redirecting the user to the new url... we should log out.
+
+      req.logout();
+
+      // And since we're logging out, we'll also flush our session.
+
+      req.session.destroy((err) => {
+        if (err) {
+          return next(err);
+        }
+
+        // And redirect the user to the new redirect uri as per the OpenID Connect
+        // spec.
+
+        res.redirect(redirect_uri);
+      });
     });
   });
 });
@@ -195,7 +212,7 @@ router.get('/.well-known/openid-configuration', (req, res) => {
     registration_endpoint: process.env.ROOT_URL + '/connect/authorize',
     subject_types_supported: ['public'],
     jwks_uri: process.env.ROOT_URL + '/connect/.well-known/jwks',
-    response_types_supported: ['id_token'],
+    response_types_supported: ['id_token token'],
     id_token_signing_alg_values_supported: [Token.alg]
   })
 });

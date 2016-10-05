@@ -14,13 +14,12 @@ const publicKey = fs.readFileSync('keys/public.pem', 'ascii');
 debug('Loaded keys/public.pem');
 
 const Token = {
+  expiresIn: TOKEN_EXPIRY_TIME,
   jwk: null,
   alg: 'ES384',
-  createClaims: (client_id, user_id, scopes, nonce) => ({
+  createClaims: (client_id, user_id) => ({
     sub: user_id,
-    aud: client_id,
-    scopes: scopes || [],
-    nonce: nonce
+    aud: client_id
   }),
   sign: (payload, done) => {
     // Set the kid on the signed token.
