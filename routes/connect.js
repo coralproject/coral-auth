@@ -164,7 +164,7 @@ router.get('/', (req, res, next) => {
 
     let digest_truncated = digest.slice(0, digest.length / 2);
 
-    id_token_claims.at_hash = base64url.encode(digest_truncated.toString());
+    id_token_claims.at_hash = base64url.escape(digest_truncated.toString('base64'));
 
     // Sign the token with the given claims.
     Token.sign(id_token_claims, (err, id_token) => {
