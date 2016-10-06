@@ -45,6 +45,16 @@ function ValidateUserLogin(user, done) {
 
 var ENABLED = {};
 
+function has_enabled() {
+  let args = [];
+
+  for (let i = 0; i < arguments.length; i++) {
+    args.push(arguments[i]);
+  }
+
+  return args.every((key) => process.env[key] && process.env[key] !== '');
+}
+
 // LOCAL
 
 const LocalStrategy = require('passport-local').Strategy;
@@ -68,9 +78,11 @@ passport.use(new LocalStrategy({
 
 // FACEBOOK
 
-ENABLED.facebook = process.env.FACEBOOK_APP_ID !== '' && process.env.FACEBOOK_APP_SECRET !== '';
+ENABLED.facebook = has_enabled('FACEBOOK_APP_ID', 'FACEBOOK_APP_SECRET');
 
 if (ENABLED.facebook) {
+
+  debug('FACEBOOK provider enabled');
 
   const FacebookStrategy = require('passport-facebook').Strategy;
 
@@ -95,9 +107,11 @@ if (ENABLED.facebook) {
 
 // TWITTER
 
-ENABLED.twitter = process.env.TWITTER_CONSUMER_KEY !== '' && process.env.TWITTER_CONSUMER_SECRET !== '';
+ENABLED.twitter = has_enabled('TWITTER_CONSUMER_KEY', 'TWITTER_CONSUMER_SECRET');
 
 if (ENABLED.twitter) {
+
+  debug('TWITTER provider enabled');
 
   const TwitterStrategy = require('passport-twitter').Strategy;
 
@@ -122,9 +136,11 @@ if (ENABLED.twitter) {
 
 // GOOGLE
 
-ENABLED.google = process.env.GOOGLE_CLIENT_ID !== '' && process.env.GOOGLE_CLIENT_SECRET !== '';
+ENABLED.google = has_enabled('GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET');
 
 if (ENABLED.google) {
+
+  debug('GOOGLE provider enabled');
 
   const GoogleStrategy = require('passport-google-oauth20').Strategy;
 

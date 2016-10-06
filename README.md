@@ -23,24 +23,23 @@ format.
 
 ## Configuration
 
-- `PORT` set to the port number you want to run the app on.
-- `TRUST_PROXY` set to `TRUE` in the event you are behind a proxy.
-- `TOKEN_EXPIRY_TIME` set to the duration for the token expiry in a string
-  format as described https://www.npmjs.com/package/parse-duration
-- `SESSION_SECRET` set to the secret for the session keys for cookie signing.
-- `ENABLE_DEMO` set to `TRUE` to enable the demo page viewable at `/demo`.
-- `DEBUG` set to `coral-auth*` to have debug logs printed during operation.
-- `ALLOWED_CLIENTS` set to space separated tuples of client id and callback url
-  in the form like `clientID1 https://clientID1/callback/url clientID2 https://clientID2/callback/url`
-- `MONGO_URL` set to the url in the `mongodb://...` format.
-- `ROOT_URL` set to the root url of the installed application in the format:
-  `<scheme>://<host>` without the path.
-- `FACEBOOK_APP_ID` set to the value provided by the social provider.
-- `FACEBOOK_APP_SECRET` set to the value provided by the social provider.
-- `TWITTER_CONSUMER_KEY` set to the value provided by the social provider.
-- `TWITTER_CONSUMER_SECRET` set to the value provided by the social provider.
-- `GOOGLE_CLIENT_ID` set to the value provided by the social provider.
-- `GOOGLE_CLIENT_SECRET` set to the value provided by the social provider.
+| Key | Description | Default | Required |
+|-----|-------------|---------|----------|
+| `PORT` | port number you want to run the app on. | | Yes |
+| `TRUST_PROXY` | `TRUE` in the event you are behind a proxy. | FALSE | No |
+| `TOKEN_EXPIRY_TIME` | duration for the token expiry in a string format as described https://www.npmjs.com/package/parse-duration | | Yes |
+| `SESSION_SECRET` | secret for the session keys for cookie signing. | | Yes |
+| `ENABLE_DEMO` | `TRUE` to enable the demo page viewable at `/demo`. | FALSE | No|
+| `DEBUG` | `coral-auth*` to have debug logs printed during operation. | | No |
+| `ALLOWED_CLIENTS` | space separated tuples of client id and callback url in the form like `clientID1 https://clientID1/callback/url clientID2 https://clientID2/callback/url` | | Yes |
+| `MONGO_URL` | url in the `mongodb://...` format. | mongodb://localhost:27107 | Yes |
+| `ROOT_URL` | root url of the installed application externally available in the format: `<scheme>://<host>` without the path. | | Yes |
+| `FACEBOOK_APP_ID` | provided by the social provider. | | No |
+| `FACEBOOK_APP_SECRET` | provided by the social provider. | | No |
+| `TWITTER_CONSUMER_KEY` | provided by the social provider. | | No |
+| `TWITTER_CONSUMER_SECRET` | provided by the social provider. | | No |
+| `GOOGLE_CLIENT_ID` | provided by the social provider. | | No |
+| `GOOGLE_CLIENT_SECRET` | provided by the social provider. | | No |
 
 ## Docker
 
