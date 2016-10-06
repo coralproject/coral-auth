@@ -41,6 +41,32 @@ format.
 | `GOOGLE_CLIENT_ID` | provided by the social provider. | | No |
 | `GOOGLE_CLIENT_SECRET` | provided by the social provider. | | No |
 
+## Social Configuration
+
+When configuring the social services, ensure you use the following format for
+the callback url's:
+
+```
+{{ ROOT_URL }}/connect/{{ SOCIAL_PROVIDER }}/callback
+```
+
+Here's an example when `ROOT_URL = https://auth.coralproject.net` and
+`SOCIAL_PROVIDER = facebook`:
+
+```
+https://auth.coralproject.net/connect/facebook/callback
+```
+
+Current supported social providers are:
+
+- Facebook
+- Google
+- Twitter
+
+Additional providers can be added by configuring the `passport.js` file to add
+the passport strategy and adding callback's inside the `routes/connect.js`
+file.
+
 ## Docker
 
 To run this installation as a single deployment run it with docker-compose.

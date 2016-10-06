@@ -8,10 +8,11 @@ WORKDIR /usr/src/app
 COPY package.json /usr/src/app/
 RUN npm install
 
+# Setup the environment
+ENV PATH /usr/src/app/bin:$PATH
+EXPOSE 5000
+
 # Bundle app source
 COPY . /usr/src/app
 
-ENV PATH /usr/src/app/bin:$PATH
-
-EXPOSE 5000
 CMD [ "npm", "start" ]

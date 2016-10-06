@@ -231,7 +231,7 @@ router.get('/.well-known/jwks', (req, res) => {
 });
 
 //==============================================================================
-// STRATEGY
+// MIDWARE
 //==============================================================================
 
 // Verify that we have the needed pieces inside the session.
@@ -255,29 +255,8 @@ const verifyMidware = (req, res, next) => {
 // STRATEGIES
 //==============================================================================
 
-// LOCAL
-
-router.post('/local', verifyMidware, passport.authenticate('local', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
-
-// FACEBOOK
-
-if (passport.ENABLED.facebook) {
-  router.get('/facebook', verifyMidware, passport.authenticate('facebook', {failureRedirect: '/connect/authorize?error=error'}));
-  router.get('/facebook/callback', verifyMidware, passport.authenticate('facebook', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
-}
-
-// TWITTER
-
-if (passport.ENABLED.twitter) {
-  router.get('/twitter', verifyMidware, passport.authenticate('twitter', {failureRedirect: '/connect/authorize?error=error'}));
-  router.get('/twitter/callback', verifyMidware, passport.authenticate('twitter', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
-}
-
-// GOOGLE
-
-if (passport.ENABLED.google) {
-  router.get('/google', verifyMidware, passport.authenticate('google', {scope: ['profile'], failureRedirect: '/connect/authorize?error=error'}));
-  router.get('/google/callback', verifyMidware, passport.authenticate('google', {successRedirect: '/connect', failureRedirect: '/connect/authorize?error=invalid_request'}));
-}
+// This will load in the passport strategies with the verifyMidware wrapped
+// around it.
+router.use(verifyMidware, require('./passport'));
 
 module.exports = router;
