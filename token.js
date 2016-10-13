@@ -1,17 +1,16 @@
 const parse = require('parse-duration');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const uuid = require('uuid');
 const jose = require('node-jose');
 const debug = require('debug')('coral-auth:token');
 
-const TOKEN_EXPIRY_TIME = parse(process.env.TOKEN_EXPIRY_TIME) / 1000;
+const TOKEN_EXPIRY_TIME = parse(process.env.CORAL_AUTH_TOKEN_EXPIRY_TIME) / 1000;
 
-const privateKey = fs.readFileSync('keys/private.pem', 'ascii');
-debug('Loaded keys/private.pem');
+const privateKey = new Buffer(process.env.CORAL_AUTH_PRIVATE_KEY, 'base64').toString('ascii');
+debug('Loaded CORAL_AUTH_PRIVATE_KEY');
 
-const publicKey = fs.readFileSync('keys/public.pem', 'ascii');
-debug('Loaded keys/public.pem');
+const publicKey = new Buffer(process.env.CORAL_AUTH_PUBLIC_KEY, 'base64').toString('ascii');
+debug('Loaded CORAL_AUTH_PUBLIC_KEY');
 
 const Token = {
   expiresIn: TOKEN_EXPIRY_TIME,
@@ -26,7 +25,7 @@ const Token = {
     payload.kid = Token.jwk.keys[0].kid;
 
     return jwt.sign(payload, privateKey, {
-      issuer: process.env.ROOT_URL + '/connect',
+      issuer: process.env.CORAL_AUTH_ROOT_URL + '/connect',
       algorithm: Token.alg,
       expiresIn: TOKEN_EXPIRY_TIME,
       jwtid: uuid.v4(),

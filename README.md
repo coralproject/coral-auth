@@ -7,13 +7,21 @@ commands:
 
 ```bash
 # generate your private key
-openssl ecparam -genkey -name secp384r1 -noout -out keys/private.pem
+CORAL_AUTH_PRIVATE_KEY=$(openssl ecparam -genkey -name secp384r1 -noout | openssl base64 -e | tr -d '\n')
 
 # generate your public key
-openssl ec -in keys/private.pem -pubout -out keys/public.pem
+CORAL_AUTH_PUBLIC_KEY=$(echo $CORAL_AUTH_PRIVATE_KEY | openssl base64 -d -A | openssl ec -pubout | openssl base64 -e | tr -d '\n')
 ```
 
-These files must be in the root directory of the project during runtime.
+If you want to have these variables added to a .env file, use:
+
+```bash
+cat >> .env <<EOF
+
+CORAL_AUTH_PRIVATE_KEY=$CORAL_AUTH_PRIVATE_KEY
+CORAL_AUTH_PUBLIC_KEY=$CORAL_AUTH_PUBLIC_KEY
+EOF
+```
 
 ## Requirements
 
@@ -23,8 +31,13 @@ format.
 
 ## Configuration
 
+All configuration variables when provided in the environment must be prefixed
+with a `CORAL_AUTH_` prefix.
+
 | Key | Description | Default | Required |
 |-----|-------------|---------|----------|
+| `PRIVATE_KEY` | ec private key base64 encoded | | Yes|
+| `PUBLIC_KEY` | ec public key base64 encoded | | Yes|
 | `PORT` | port number you want to run the app on. | | Yes |
 | `TRUST_PROXY` | `TRUE` in the event you are behind a proxy. | FALSE | No |
 | `TOKEN_EXPIRY_TIME` | duration for the token expiry in a string format as described https://www.npmjs.com/package/parse-duration | | Yes |
@@ -47,10 +60,10 @@ When configuring the social services, ensure you use the following format for
 the callback url's:
 
 ```
-{{ ROOT_URL }}/connect/{{ SOCIAL_PROVIDER }}/callback
+{{ CORAL_AUTH_ROOT_URL }}/connect/{{ SOCIAL_PROVIDER }}/callback
 ```
 
-Here's an example when `ROOT_URL = https://auth.coralproject.net` and
+Here's an example when `CORAL_AUTH_ROOT_URL = https://auth.coralproject.net` and
 `SOCIAL_PROVIDER = facebook`:
 
 ```
@@ -73,8 +86,8 @@ To run this installation as a single deployment run it with docker-compose.
 
 1. You must have generated the keys from above in the **Installation** section.
 2. Specify configuration as indicated in the **Configuration** section except
-  for the config `MONGO_URL` and `PORT` in a file called `.env` in the project
-  root.
+  for the config `CORAL_AUTH_MONGO_URL` and `CORAL_AUTH_PORT` in a file called
+  `.env` in the project root.
 2. Create the deployment with `docker-compose up -d`.
 3. Create a user with the cli inside the following shell `docker-compose run
   --rm auth bash`.

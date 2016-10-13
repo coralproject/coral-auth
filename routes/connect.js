@@ -17,7 +17,7 @@ const passport = require('../passport');
  * @param {String} uri       - the uri to check if it matches our callback param
  */
 const ValidateClient = function(client_id, uri) {
-  let clients = process.env.ALLOWED_CLIENTS.split(' ');
+  let clients = process.env.CORAL_AUTH_ALLOWED_CLIENTS.split(' ');
 
   // Find the client in the list.
   let clientIDX = clients.indexOf(client_id);
@@ -215,12 +215,12 @@ router.get('/', (req, res, next) => {
 
 router.get('/.well-known/openid-configuration', (req, res) => {
   res.json({
-    issuer: process.env.ROOT_URL + '/connect',
-    authorization_endpoint: process.env.ROOT_URL + '/connect/authorize',
+    issuer: process.env.CORAL_AUTH_ROOT_URL + '/connect',
+    authorization_endpoint: process.env.CORAL_AUTH_ROOT_URL + '/connect/authorize',
     scopes_supported: ['openid'],
-    registration_endpoint: process.env.ROOT_URL + '/connect/authorize',
+    registration_endpoint: process.env.CORAL_AUTH_ROOT_URL + '/connect/authorize',
     subject_types_supported: ['public'],
-    jwks_uri: process.env.ROOT_URL + '/connect/.well-known/jwks',
+    jwks_uri: process.env.CORAL_AUTH_ROOT_URL + '/connect/.well-known/jwks',
     response_types_supported: ['id_token token'],
     id_token_signing_alg_values_supported: [Token.alg]
   })

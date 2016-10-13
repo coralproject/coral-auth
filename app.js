@@ -23,7 +23,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // If we are currently trusting the proxy, then trust the first proxy.
-if (process.env.TRUST_PROXY === 'TRUE') {
+if (process.env.CORAL_AUTH_TRUST_PROXY === 'TRUE') {
   app.set('trust proxy', 1);
 }
 
@@ -35,12 +35,12 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.CORAL_AUTH_SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
   cookie: {
     maxAge: 60000,
-    secure: process.env.ROOT_URL.indexOf('https') === 0
+    secure: process.env.CORAL_AUTH_ROOT_URL.indexOf('https') === 0
   },
   store: new MongoStore({
     mongooseConnection: mongoose.connection
@@ -76,7 +76,7 @@ const connect = require('./routes/connect');
 
 // Walk over the allowed clients and only allow the XHR from those
 // hosts/schemes.
-const allowedOrigins = process.env.ALLOWED_CLIENTS.split(' ').filter((client, i) => {
+const allowedOrigins = process.env.CORAL_AUTH_ALLOWED_CLIENTS.split(' ').filter((client, i) => {
   return i % 2 == 1;
 }).map((client) => {
   let u = url.parse(client);
@@ -95,10 +95,10 @@ app.use('/connect', connect);
 
 // DEMO
 
-if (process.env.ENABLE_DEMO === 'TRUE') {
+if (process.env.CORAL_AUTH_ENABLE_DEMO === 'TRUE') {
   app.get('/demo', (req, res) => {
     res.render('demo', {
-      root_url: process.env.ROOT_URL
+      root_url: process.env.CORAL_AUTH_ROOT_URL
     });
   });
 }
