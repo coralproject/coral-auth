@@ -8,8 +8,8 @@
     <title>OpenID Connect Demo</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
-    <link rel="stylesheet" href="/stylesheets/style.css" media="screen">
-    <link rel="stylesheet" href="/stylesheets/font-awesome.min.css" media="screen">
+    <link rel="stylesheet" href="<%= env.CORAL_AUTH_ROOT_URL %>/stylesheets/style.css" media="screen">
+    <link rel="stylesheet" href="<%= env.CORAL_AUTH_ROOT_URL %>/stylesheets/font-awesome.min.css" media="screen">
 
     <style media="screen">
       .debugger-btn { margin-bottom: 15px; }
@@ -45,8 +45,8 @@
 
     </div>
 
-    <script src="/javascripts/oidc-client.js" charset="utf-8"></script>
-    <script src="/javascripts/jwt-decode.min.js" charset="utf-8"></script>
+    <script src="<%= env.CORAL_AUTH_ROOT_URL %>/javascripts/oidc-client.js" charset="utf-8"></script>
+    <script src="<%= env.CORAL_AUTH_ROOT_URL %>/javascripts/jwt-decode.min.js" charset="utf-8"></script>
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function(event) {
         ///////////////////////////////
@@ -74,8 +74,8 @@
 
         var settings = {
           client_id: 'js.tokenmanager',
-          authority: '<%= root_url %>/connect',
-          redirect_uri: '<%= root_url %>/demo',
+          authority: '<%= env.CORAL_AUTH_ROOT_URL %>/connect',
+          redirect_uri: '<%= env.CORAL_AUTH_ROOT_URL %>/demo',
           response_type: 'id_token token',
           scope: 'openid',
           loadUserInfo: true,
@@ -106,7 +106,7 @@
           manager.signinPopup().then(function(user) {
 
           }).catch(function(err) {
-            console.error(err);
+            alert("Login failed");
           });
         }
 

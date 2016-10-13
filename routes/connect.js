@@ -124,6 +124,7 @@ router.get('/authorize', (req, res, next) => {
   }
 
   res.render('authorize', {
+    env: process.env,
     csrfToken: req.csrfToken(),
     enabled: passport.ENABLED
   });

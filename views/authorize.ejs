@@ -8,9 +8,9 @@
     <title>Coral Login</title>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/materialize.min.css" media="screen">
-    <link rel="stylesheet" href="/stylesheets/style.css" media="screen">
-    <link rel="stylesheet" href="/stylesheets/font-awesome.min.css" media="screen">
+    <link rel="stylesheet" href="<%= env.CORAL_AUTH_ROOT_URL %>/stylesheets/materialize.min.css" media="screen">
+    <link rel="stylesheet" href="<%= env.CORAL_AUTH_ROOT_URL %>/stylesheets/style.css" media="screen">
+    <link rel="stylesheet" href="<%= env.CORAL_AUTH_ROOT_URL %>/stylesheets/font-awesome.min.css" media="screen">
   </head>
 
   <body>
@@ -19,15 +19,15 @@
 
       <div class="form-signin">
         <h2 class="form-signin-heading">Coral Login</h2>
-        <% if (enabled.facebook) { %><a class="btn btn-lg waves-effect waves-light fb-sign-in" href="/connect/facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> Connect with Facebook</a><% } %>
-        <% if (enabled.twitter) { %><a class="btn btn-lg waves-effect waves-light twitter-sign-in" href="/connect/twitter"><i class="fa fa-twitter" aria-hidden="true"></i> Connect with Twitter</a><% } %>
-        <% if (enabled.google) { %><a class="btn btn-lg waves-effect waves-light google-sign-in" href="/connect/google"><i class="fa fa-google" aria-hidden="true"></i> Connect with Google</a><% } %>
+        <% if (enabled.facebook) { %><a class="btn btn-lg waves-effect waves-light fb-sign-in" href="<%= env.CORAL_AUTH_ROOT_URL %>/connect/facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> Connect with Facebook</a><% } %>
+        <% if (enabled.twitter) { %><a class="btn btn-lg waves-effect waves-light twitter-sign-in" href="<%= env.CORAL_AUTH_ROOT_URL %>/connect/twitter"><i class="fa fa-twitter" aria-hidden="true"></i> Connect with Twitter</a><% } %>
+        <% if (enabled.google) { %><a class="btn btn-lg waves-effect waves-light google-sign-in" href="<%= env.CORAL_AUTH_ROOT_URL %>/connect/google"><i class="fa fa-google" aria-hidden="true"></i> Connect with Google</a><% } %>
 
         <% if (enabled.facebook || enabled.twitter || enabled.google) { %>
           <h2 class="form-signin-heading">Or</h2>
         <% } %>
 
-        <form method="post" action="/connect/local">
+        <form method="post" action="<%= env.CORAL_AUTH_ROOT_URL %>/connect/local">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="input-field">
             <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
@@ -43,6 +43,6 @@
 
     </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="/javascripts/materialize.min.js"></script>
+    <script src="<%= env.CORAL_AUTH_ROOT_URL %>/javascripts/materialize.min.js"></script>
   </body>
 </html>

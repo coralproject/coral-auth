@@ -98,7 +98,7 @@ app.use('/connect', connect);
 if (process.env.CORAL_AUTH_ENABLE_DEMO === 'TRUE') {
   app.get('/demo', (req, res) => {
     res.render('demo', {
-      root_url: process.env.CORAL_AUTH_ROOT_URL
+      env: process.env
     });
   });
 }
