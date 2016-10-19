@@ -28,8 +28,7 @@ const Token = {
       issuer: process.env.CORAL_AUTH_ROOT_URL + '/connect',
       algorithm: Token.alg,
       expiresIn: TOKEN_EXPIRY_TIME,
-      jwtid: uuid.v4(),
-      notBefore: "1 minute"
+      jwtid: uuid.v4()
     }, done);
   },
   verify: (token, done) => {
