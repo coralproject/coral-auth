@@ -7,6 +7,7 @@ const csurf = require('csurf');
 const cors = require('express-cors');
 const url = require('url');
 const helmet = require('helmet');
+const flash = require('connect-flash');
 const passport = require('./passport');
 const mongoose = require('./mongoose');
 const MongoStore = require('connect-mongo')(session);
@@ -55,6 +56,9 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// Add flash in after the session has been verified.
+app.use(flash());
 
 app.use(csurf());
 

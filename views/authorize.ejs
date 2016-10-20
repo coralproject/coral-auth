@@ -17,6 +17,15 @@
 
     <div class="container">
 
+      <% if (errors.length > 0) { %>
+        <p><b>Some authentication errors occured:</b></p>
+        <ul>
+        <% for (var i = 0; i < errors.length; i++) { %>
+          <li><%= errors[i] %></li>
+        <% } %>
+        </ul>
+      <% } %>
+
       <div class="form-signin">
         <h2 class="form-signin-heading">Coral Login</h2>
         <% if (enabled.facebook) { %><a class="btn btn-lg waves-effect waves-light fb-sign-in" href="<%= env.CORAL_AUTH_ROOT_URL %>/connect/facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> Connect with Facebook</a><% } %>
