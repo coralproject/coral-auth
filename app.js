@@ -29,24 +29,46 @@ if (process.env.CORAL_AUTH_TRUST_PROXY === 'TRUE') {
 }
 
 //==============================================================================
+// STATIC FILES
+//==============================================================================
+
+// Serve up static files as a last resort.
+app.use(express.static(path.join(__dirname, 'public')));
+
+//==============================================================================
 // APP MIDDLEWARE
 //==============================================================================
 
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(session({
+
+//==============================================================================
+// SESSION MIDDLEWARE
+//==============================================================================
+
+let session_opts = {
   secret: process.env.CORAL_AUTH_SESSION_SECRET,
   resave: true,
+  httpOnly: true,
+  rolling: true,
   saveUninitialized: true,
   cookie: {
-    maxAge: 60000,
+
+    // 10 minutes for expiry.
+    maxAge: 600000,
+
+    // True when the root url is also SSL enabled.
     secure: process.env.CORAL_AUTH_ROOT_URL.indexOf('https') === 0
   },
   store: new MongoStore({
+
+    // Use the already existing mongoose connection.
     mongooseConnection: mongoose.connection
   })
-}));
+};
+
+app.use(session(session_opts));
 
 // Ensure that the session exists on the request.
 app.use((req, res, next) => {
@@ -54,12 +76,18 @@ app.use((req, res, next) => {
     return next(new Error('session not available'));
   }
 
+  // Add the session expiry time onto the response locals.
+  res.locals.sessionExpiry = req.session.cookie.maxAge;
+
+  console.log(res.locals.sessionExpiry);
+
   next();
 });
 
 // Add flash in after the session has been verified.
 app.use(flash());
 
+// Add CSRF validation.
 app.use(csurf());
 
 //==============================================================================
@@ -74,10 +102,6 @@ app.use(passport.session());
 // STRATEGIES
 //==============================================================================
 
-// CONNECT
-
-const connect = require('./routes/connect');
-
 // Walk over the allowed clients and only allow the XHR from those
 // hosts/schemes.
 const allowedOrigins = process.env.CORAL_AUTH_ALLOWED_CLIENTS.split(' ').filter((client, i) => {
@@ -90,10 +114,15 @@ const allowedOrigins = process.env.CORAL_AUTH_ALLOWED_CLIENTS.split(' ').filter(
   return url.format(u);
 });
 
+// Allow CORS on only the well known route.
 app.use('/connect/.well-known', cors({
   allowedOrigins: allowedOrigins,
   methods: ['GET']
 }));
+
+// CONNECT
+
+const connect = require('./routes/connect');
 
 app.use('/connect', connect);
 
@@ -106,13 +135,6 @@ if (process.env.CORAL_AUTH_ENABLE_DEMO === 'TRUE') {
     });
   });
 }
-
-//==============================================================================
-// STATIC FILES
-//==============================================================================
-
-// Serve up static files as a last resort.
-app.use(express.static(path.join(__dirname, 'public')));
 
 //==============================================================================
 // ERROR HANDLING

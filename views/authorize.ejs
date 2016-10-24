@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,6 +16,7 @@
 
     <div class="container">
 
+      <div class="errors">
       <% if (errors.length > 0) { %>
         <p><b>Some authentication errors occured:</b></p>
         <ul>
@@ -25,6 +25,7 @@
         <% } %>
         </ul>
       <% } %>
+      </div>
 
       <div class="form-signin">
         <h2 class="form-signin-heading">Coral Login</h2>
@@ -53,5 +54,23 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="<%= env.CORAL_AUTH_ROOT_URL %>/javascripts/materialize.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        setTimeout(function() {
+          $('.form-signin form input, .form-signin form button, .form-signin form').prop('disabled', true);
+          $('.form-signin a').each(function() {
+            var a = $(this);
+            a.addClass('disabled');
+            a.removeAttr('href');
+            a.click(function(e) {
+              e.preventDefault();
+              return false;
+            });
+          });
+
+          $('.errors').append('<p><b>Login page expired, please <a href="' + window.location.href + '">refresh</a>.</b></p>');
+        }, <%= sessionExpiry %>);
+      });
+    </script>
   </body>
 </html>
