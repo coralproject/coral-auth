@@ -15,18 +15,6 @@
   <body>
 
     <div class="container">
-
-      <div class="errors">
-      <% if (errors.length > 0) { %>
-        <p><b>Some authentication errors occured:</b></p>
-        <ul>
-        <% for (var i = 0; i < errors.length; i++) { %>
-          <li><%= errors[i] %></li>
-        <% } %>
-        </ul>
-      <% } %>
-      </div>
-
       <div class="form-signin">
         <h2 class="form-signin-heading">Coral Login</h2>
         <% if (enabled.facebook) { %><a class="btn btn-lg waves-effect waves-light fb-sign-in" href="<%= env.CORAL_AUTH_ROOT_URL %>/connect/facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> Connect with Facebook</a><% } %>
@@ -48,6 +36,17 @@
             <label for="inputPassword" class="sr-only">Password</label>
           </div>
           <button class="btn waves-effect waves-light coral-sign-in" type="submit">Sign in</button>
+          <% if (errors.length > 0) { %>
+            <div class="card">
+              <div class="card-content">
+                <span class="card-title deep-orange-text">Uh oh!</span>
+                <p class="deep-orange-text">We had some trouble logging you in:</p>
+                <% errors.forEach(error => { %>
+                  <p class="deep-orange-text"><%= error %></p>
+                <% }) %>
+              </div>
+            </div>
+          <% } %>
         </form>
       </div>
 
