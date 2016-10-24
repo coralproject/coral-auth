@@ -15,18 +15,6 @@
   <body>
 
     <div class="container">
-
-      <div class="errors">
-      <% if (errors.length > 0) { %>
-        <p><b>Some authentication errors occured:</b></p>
-        <ul>
-        <% for (var i = 0; i < errors.length; i++) { %>
-          <li><%= errors[i] %></li>
-        <% } %>
-        </ul>
-      <% } %>
-      </div>
-
       <div class="form-signin">
         <h2 class="form-signin-heading">Coral Login</h2>
         <% if (enabled.facebook) { %><a class="btn btn-lg waves-effect waves-light fb-sign-in" href="<%= env.CORAL_AUTH_ROOT_URL %>/connect/facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> Connect with Facebook</a><% } %>
@@ -49,6 +37,18 @@
           </div>
           <button class="btn waves-effect waves-light coral-sign-in" type="submit">Sign in</button>
         </form>
+
+        <% if (errors.length > 0) { %>
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title deep-orange-text">Uh oh!</span>
+              <p class="deep-orange-text">We had some trouble logging you in:</p>
+              <% errors.forEach(error => { %>
+                <p class="deep-orange-text"><%= error %></p>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
       </div>
 
     </div>
@@ -58,7 +58,7 @@
       $(document).ready(function() {
         setTimeout(function() {
           $('.form-signin form input, .form-signin form button, .form-signin form').prop('disabled', true);
-          $('.form-signin a').each(function() {
+          $('.form-signin a.btn').each(function() {
             var a = $(this);
             a.addClass('disabled');
             a.removeAttr('href');
@@ -68,7 +68,7 @@
             });
           });
 
-          $('.errors').append('<p><b>Login page expired, please <a href="' + window.location.href + '">refresh</a>.</b></p>');
+          $('.form-signin').append('<div class="card"><div class="card-content"><span class="card-title deep-orange-text">Uh oh!</span><p class="deep-orange-text">Login page expired, please <a href="' + window.location.href + '">refresh</a>.</p></div></div>');
         }, <%= sessionExpiry %>);
       });
     </script>
