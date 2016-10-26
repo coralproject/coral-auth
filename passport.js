@@ -33,7 +33,7 @@ function ValidateUserLogin(user, done) {
   }
 
   if (user.disabled) {
-    return done(new Error('user disabled'));
+    return done(null, false, {message: 'Account disabled'});
   }
 
   return done(null, user);
@@ -78,7 +78,7 @@ passport.use(new LocalStrategy({
 
 // FACEBOOK
 
-ENABLED.facebook = has_enabled('FACEBOOK_APP_ID', 'FACEBOOK_APP_SECRET');
+ENABLED.facebook = has_enabled('CORAL_AUTH_FACEBOOK_APP_ID', 'CORAL_AUTH_FACEBOOK_APP_SECRET');
 
 if (ENABLED.facebook) {
 
@@ -107,7 +107,7 @@ if (ENABLED.facebook) {
 
 // TWITTER
 
-ENABLED.twitter = has_enabled('TWITTER_CONSUMER_KEY', 'TWITTER_CONSUMER_SECRET');
+ENABLED.twitter = has_enabled('CORAL_AUTH_TWITTER_CONSUMER_KEY', 'CORAL_AUTH_TWITTER_CONSUMER_SECRET');
 
 if (ENABLED.twitter) {
 
@@ -136,7 +136,7 @@ if (ENABLED.twitter) {
 
 // GOOGLE
 
-ENABLED.google = has_enabled('GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET');
+ENABLED.google = has_enabled('CORAL_AUTH_GOOGLE_CLIENT_ID', 'CORAL_AUTH_GOOGLE_CLIENT_SECRET');
 
 if (ENABLED.google) {
 

@@ -24,6 +24,8 @@
 
         <h1>OpenID Connect Demo</h1>
 
+        <p class="messages"></p>
+
         <button type="button" class="btn btn-lg btn-secondary btn-block" id="signin">Login with Coral</button>
 
         <div class="card card-block" style="display:none;margin-top:15px;" id="logged-in">
@@ -45,6 +47,7 @@
 
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="<%= env.CORAL_AUTH_ROOT_URL %>/javascripts/oidc-client.js" charset="utf-8"></script>
     <script src="<%= env.CORAL_AUTH_ROOT_URL %>/javascripts/jwt-decode.min.js" charset="utf-8"></script>
     <script type="text/javascript">
@@ -106,7 +109,7 @@
           manager.signinPopup().then(function(user) {
 
           }).catch(function(err) {
-            alert("Login failed");
+            $('.messages').text('Login Failed');
           });
         }
 
