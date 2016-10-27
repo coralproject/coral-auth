@@ -99,7 +99,13 @@ function listUsers() {
     .exec()
     .then((users) => {
       let table = new Table({
-        head: ['ID', 'Display Name', 'Profiles', 'State']
+        head: [
+          'ID',
+          'Display Name',
+          'Profiles',
+          'Roles',
+          'State'
+        ]
       });
 
       users.forEach((user) => {
@@ -107,6 +113,7 @@ function listUsers() {
           user.id,
           user.displayName,
           user.profiles.map((p) => p.provider).join(', '),
+          user.roles.join(', '),
           user.disabled ? 'Disabled' : 'Enabled'
         ]);
       });
@@ -138,6 +145,48 @@ function mergeUsers(dstUserID, srcUserID) {
       console.error(err);
       mongoose.disconnect();
     });
+}
+
+/**
+ * Adds a role to a user
+ * @param  {String} userUD id of the user to add the role to
+ * @param  {String} role   the role to add
+ */
+function addRole(userID, role) {
+  const User = require('../models/user');
+  const mongoose = require('../mongoose');
+
+  User.addRoleToUser(userID, role, (err) => {
+    if (err) {
+      console.error(err);
+      mongoose.disconnect();
+      return;
+    }
+
+    console.log(`Added the ${role} role to User ${userID}.`);
+    mongoose.disconnect();
+  });
+}
+
+/**
+ * Removes a role from a user
+ * @param  {String} userUD id of the user to remove the role from
+ * @param  {String} role   the role to remove
+ */
+function removeRole(userID, role) {
+  const User = require('../models/user');
+  const mongoose = require('../mongoose');
+
+  User.removeRoleFromUser(userID, role, (err) => {
+    if (err) {
+      console.error(err);
+      mongoose.disconnect();
+      return;
+    }
+
+    console.log(`Removed the ${role} role from User ${userID}.`);
+    mongoose.disconnect();
+  });
 }
 
 /**
@@ -225,6 +274,16 @@ program
   .command('merge <dstUserID> <srcUserID>')
   .description('merge srcUser into the dstUser')
   .action(mergeUsers);
+
+program
+  .command('addrole <userID> <role>')
+  .description('adds a role to a given user')
+  .action(addRole);
+
+program
+  .command('removerole <userID> <role>')
+  .description('removes a role from a given user')
+  .action(removeRole);
 
 program
   .command('disable <userID>')

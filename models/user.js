@@ -14,7 +14,8 @@ const UserSchema = new mongoose.Schema({
   displayName: String,
   disabled: Boolean,
   password: String,
-  profiles: [ProfileSchema]
+  profiles: [ProfileSchema],
+  roles: [String]
 });
 
 // Add the indixies on the user profile data.
@@ -83,7 +84,7 @@ UserSchema.statics.findLocalUser = function(email, password, done) {
 /**
  * Merges two users together by taking all the profiles on a given user and
  * pushing them into the source user followed by deleting the destination user's
- * user account.
+ * user account. This will not merge the roles associated with the source user.
  * @param  {String} dstUserID id of the user to which is the target of the merge
  * @param  {String} srcUserID id of the user to which is the source of the merge
  * @return {Promise}          resolves when the users are merged
@@ -132,6 +133,7 @@ UserSchema.statics.findOrCreateExternalUser = function(profile, done) {
     // The user was not found, lets create them!
     user = new User({
       displayName: profile.displayName,
+      roles: [],
       profiles: [
         {
           id: profile.id,
@@ -166,6 +168,7 @@ UserSchema.statics.createLocalUser = function(email, password, displayName, done
     let user = new User({
       displayName: displayName,
       password: hashedPassword,
+      roles: [],
       profiles: [
         {
           id: email,
@@ -210,6 +213,38 @@ UserSchema.statics.enableUser = function(id, done) {
   }, {
     $set: {
       disabled: false
+    }
+  }, done);
+};
+
+/**
+ * Adds a role to a user.
+ * @param  {String}   id   id of a user
+ * @param  {String}   role role to add
+ * @param  {Function} done callback after the operation is complete
+ */
+UserSchema.statics.addRoleToUser = function(id, role, done) {
+  User.update({
+    id: id
+  }, {
+    $addToSet: {
+      roles: role
+    }
+  }, done);
+};
+
+/**
+ * Removes a role from a user.
+ * @param  {String}   id   id of a user
+ * @param  {String}   role role to remove
+ * @param  {Function} done callback after the operation is complete
+ */
+UserSchema.statics.removeRoleFromUser = function(id, role, done) {
+  User.update({
+    id: id
+  }, {
+    $pull: {
+      roles: role
     }
   }, done);
 };
