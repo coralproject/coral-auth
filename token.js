@@ -1,7 +1,7 @@
 const parse = require('parse-duration');
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid');
-const jose = require('node-jose');
+const rs = require('jsrsasign');
 const debug = require('debug')('coral-auth:token');
 
 const TOKEN_EXPIRY_TIME = parse(process.env.CORAL_AUTH_TOKEN_EXPIRY_TIME) / 1000;
@@ -12,9 +12,17 @@ debug('Loaded CORAL_AUTH_PRIVATE_KEY');
 const publicKey = new Buffer(process.env.CORAL_AUTH_PUBLIC_KEY, 'base64').toString('ascii');
 debug('Loaded CORAL_AUTH_PUBLIC_KEY');
 
+let key = rs.KEYUTIL.getKey(publicKey);
+let jwk = rs.KEYUTIL.getJWKFromKey(key);
+
+// add the use: sig to the key as per the openidconnect req.
+jwk.use = 'sig';
+
 const Token = {
   expiresIn: TOKEN_EXPIRY_TIME,
-  jwk: null,
+  jwk: {
+    "keys": [jwk]
+  },
   alg: 'ES384',
   createClaims: (client_id, user_id) => ({
     sub: user_id,
@@ -37,31 +45,5 @@ const Token = {
     }, done);
   }
 };
-
-// Load the public key into the keystore so we can use it to create our jwk.
-jose.JWK.asKey(publicKey, 'pem').then((result) => {
-
-  // Load the keystore JSON into our object.
-  let jwk = result.keystore.toJSON();
-
-  // Add the use param for the key.
-  jwk.keys = jwk.keys.map((key) => {
-    key.use = 'sig';
-
-    return key;
-  });
-
-  // Add the jwk for the token.
-  Token.jwk = jwk;
-
-  debug('Keystore has been populated');
-}).catch((err) => {
-
-  // We couldn't load the publicKey into the keystore.
-  console.error(err);
-
-  // This is bad, so we should just exit at this point.
-  process.exit(1);
-});
 
 module.exports = Token;
