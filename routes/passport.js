@@ -22,7 +22,7 @@ const SuccessCallbackHandler = function(req, res, next) {
   let query = {};
 
   let access_token_claims = {
-    scopes: []
+    roles: req.user.roles || []
   };
 
   Token.sign(access_token_claims, (err, access_token) => {
