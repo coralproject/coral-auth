@@ -165,7 +165,7 @@ function updateUser(userID, options) {
 
   const updates = [];
 
-  if (options.email && options.email !== "") {
+  if (options.email && typeof options.email === 'string' && options.email.length > 0) {
     let q = User.update({
       'id': userID,
       'profiles.provider': 'local'
@@ -178,7 +178,7 @@ function updateUser(userID, options) {
     updates.push(q);
   }
 
-  if (options.name && options.name !== "") {
+  if (options.name && typeof options.name === 'string' && options.name.length > 0) {
     let q = User.update({
       'id': userID
     }, {
