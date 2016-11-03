@@ -152,6 +152,21 @@ UserSchema.statics.findOrCreateExternalUser = function(profile, done) {
   });
 };
 
+UserSchema.statics.changePassword = function(id, password, done) {
+  bcrypt.hash(password, SALT_ROUNDS, (err, hashedPassword) => {
+    if (err) {
+      return done(err);
+    }
+
+    User
+      .update({id}, {
+        $set: {
+          password: hashedPassword
+        }
+      }, done);
+  });
+};
+
 /**
  * Creates the local user with a given email, password, and name.
  * @param  {String}   email       email of the new user
