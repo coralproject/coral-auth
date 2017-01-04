@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // APP MIDDLEWARE
 //==============================================================================
 
-app.use(helmet());
+app.use(helmet({ frameguard: false }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
