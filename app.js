@@ -39,7 +39,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // APP MIDDLEWARE
 //==============================================================================
 
-app.use(helmet({ frameguard: false }));
+const helmet_opts = {
+
+  // Only disable the frameguard in the event that the environment variable
+  // `CORAL_AUTH_DISABLE_FRAMEGUARD` is `TRUE`.
+  frameguard: !(process.env.CORAL_AUTH_DISABLE_FRAMEGUARD === 'TRUE')
+}
+
+app.use(helmet(helmet_opts));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
