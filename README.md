@@ -53,6 +53,7 @@ with a `CORAL_AUTH_` prefix.
 | `TWITTER_CONSUMER_SECRET` | provided by the social provider. | | No |
 | `GOOGLE_CLIENT_ID` | provided by the social provider. | | No |
 | `GOOGLE_CLIENT_SECRET` | provided by the social provider. | | No |
+| `DISABLE_FRAMEGUARD` | disable frameguard | FALSE | No |
 
 ## Social Configuration
 
